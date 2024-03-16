@@ -9,6 +9,7 @@
 #### 🐱 Git Commit Message
 - `#이슈번호 :깃모지: 작업 내용` 방식으로 생성
 - ex. `#1 🎉 프로젝트 생성`
+- 😊 [깃모지 참고 블로그](https://babyyu0.tistory.com/28)
   
 #### 🐱 Git Issue
 - 제공된 템플릿 형식에 맞게 작성
