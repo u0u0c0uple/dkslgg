@@ -4,8 +4,16 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.dkslgg.record.model.dao.AccountDao">
-    <select id="selectPuuidByGameNameAndTagLine" parameterType="String">
-        SELECT `puuid` FROM `ACCOUNT` WHERE `game_name` = #{gameName} AND `tag_line` = #{tagLine}
+    <select id="selectPuuidByGameNameAndTagLine" parameterType="String" resultType="String">
+        SELECT `puuid` FROM `ACCOUNT` WHERE `game_name` = #{gameName} AND `tag_line` = #{tagLine};
+    </select>
+    <select id="selectByPuuid" parameterType="String" resultType="AccountVo">
+        SELECT `puuid`, `game_name` AS 'gameName', `tag_line` AS 'tagLine',
+                `created_at` AS 'createdAt', `updated_at` AS 'updatedAt'
+        FROM `ACCOUNT` WHERE `puuid` = #{puuid} LIMIT 1;
+    </select>
+    <select id="countByPuuid" parameterType="String" resultType="Integer">
+        SELECT COUNT(*) FROM `ACCOUNT` WHERE `puuid` = #{puuid};
     </select>
     <insert id="insert" parameterType="String">
         INSERT IGNORE INTO `ACCOUNT`(`puuid`, `game_name`, `tag_line`, `created_at`, `updated_at`) VALUES (#{puuid}, #{gameName}, #{tagLine}, NOW(), NOW());

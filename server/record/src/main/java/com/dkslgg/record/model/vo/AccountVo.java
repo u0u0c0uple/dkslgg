@@ -16,7 +16,7 @@ public class AccountVo extends BaseVo {
     private final String tagLine;
 
     @Builder
-    public AccountVo(Timestamp createdAt, Timestamp updatedAt, String puuid, String gameName, String tagLine) {
+    public AccountVo(String puuid, String gameName, String tagLine, Timestamp createdAt, Timestamp updatedAt) {
         super(createdAt, updatedAt);
 
         if (puuid == null || puuid.length() != 78) {
