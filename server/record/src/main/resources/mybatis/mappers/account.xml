@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dkslgg.record.model.dao.AccountDao">
+    <select id="selectPuuidByGameNameAndTagLine" parameterType="String">
+        SELECT `puuid` FROM `ACCOUNT` WHERE `game_name` = #{gameName} AND `tag_line` = #{tagLine}
+    </select>
+    <insert id="insert" parameterType="String">
+        INSERT IGNORE INTO `ACCOUNT`(`puuid`, `game_name`, `tag_line`, `created_at`, `updated_at`) VALUES (#{puuid}, #{gameName}, #{tagLine}, NOW(), NOW());
+    </insert>
+</mapper>
