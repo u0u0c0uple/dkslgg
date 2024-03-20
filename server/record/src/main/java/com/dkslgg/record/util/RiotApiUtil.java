@@ -1,14 +1,13 @@
 package com.dkslgg.record.util;
 
-import com.dkslgg.record.model.dto.MatchDto;
 import com.dkslgg.record.model.dto.api.AccountDto;
+import com.dkslgg.record.model.dto.api.MatchDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Component
@@ -21,7 +20,7 @@ public class RiotApiUtil {
     }
 
     public String formatRiotId(String riotId) {
-        if(riotId.length() == 2) {
+        if (riotId.length() == 2) {
             riotId = riotId.charAt(0) + " " + riotId.charAt(1);
         }
 
@@ -35,28 +34,30 @@ public class RiotApiUtil {
                     throw new RecordException(ErrorMessage.RIOT_ID_NOT_FOUND);
                 }).onStatus(HttpStatusCode::is5xxServerError, clientResponse -> {
                     throw new RecordException(ErrorMessage.RIOT_API_FAILED);
-                })
-                .bodyToMono(AccountDto.class).block();
+                }).bodyToMono(AccountDto.class).block();
     }
 
-    //@Transactional(rollbackFor = RecordException.class)
-    public List<String> getMatchListByPuuid(String puuid) {
-        String[] matchs = webClient.get().uri(uriBuilder -> uriBuilder
-                .path("/lol/match/v5/matches/by-puuid/" + puuid + "/ids")
-                .queryParam("count", 10)
-                .build()).retrieve().bodyToMono(String[].class).block();
-
-        List<String> matchList = Arrays.asList(matchs != null ? matchs : new String[]{});
-        log.info("puuid {}에 출력된 Match List: {}", puuid, matchList);
-
-        return matchList;
+    public List<String> requestMatchListByPuuid(String puuid, String startTime) {
+        return webClient.get().uri(uriBuilder -> uriBuilder
+                        .path("/lol/match/v5/matches/by-puuid/" + puuid + "/ids")
+                        .queryParam("startTime", startTime)
+                        .queryParam("count", 10)
+                        .build()).retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> {
+                    throw new RecordException(ErrorMessage.ACCOUNT_INVALID);
+                }).onStatus(HttpStatusCode::is5xxServerError, clientResponse -> {
+                    throw new RecordException(ErrorMessage.ACCOUNT_INVALID);
+                }).bodyToMono(List.class).block();
     }
 
-    //@Transactional(rollbackFor = RecordException.class)
-    public MatchDto getMatchInfoByMatchId(String matchId) {
-        MatchDto matchDto = webClient.get().uri("/lol/match/v5/matches/{matchId}", matchId).retrieve().bodyToMono(MatchDto.class).block();
-        log.info("Match Id {}에 출력된 Match Info: {}", matchId, matchDto);
+    public MatchDto requestMatchByMatchId(String matchId) {
+        return webClient.get().uri("/lol/match/v5/matches/{matchId}", matchId)
+                .retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> {
+                    throw new RecordException(ErrorMessage.MATCH_INVALID);
+                }).onStatus(HttpStatusCode::is5xxServerError, clientResponse -> {
+                    throw new RecordException(ErrorMessage.MATCH_INVALID);
+                }).bodyToMono(MatchDto.class).block();
 
-        return matchDto;
     }
 }
