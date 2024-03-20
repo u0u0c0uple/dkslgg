@@ -4,8 +4,39 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.dkslgg.record.model.dao.MatchDao">
-    <insert id="insert" parameterType="matchVo">
-        INSERT IGNORE INTO match(`match_id`, `game_creation`, `game_duration`)
-               VALUES(#{matchId}, #{gameCreation}, #{gameDuration});
+    <select id="countByMatchId" parameterType="String" resultType="Integer">
+        SELECT count(*) FROM `MATCH` WHERE `match_id` = #{matchId};
+    </select>
+    <select id="selectMatchIdByPuuid" parameterType="String" resultType="String">
+        SELECT DISTINCT `match_id` FROM `PARTICIPANT` WHERE `part_puuid` = #{puuid} LIMIT 10;
+    </select>
+    <select id="selectByMatchId" parameterType="String" resultType="MatchVo">
+        SELECT `match_id` AS 'matchId', `game_creation` AS 'gameCreation', `game_duration` AS 'gameDuration',
+                `created_at` AS 'createdAt', `updated_at` AS 'updatedAt'
+        FROM `MATCH` WHERE `match_id` = #{matchId} LIMIT 1;
+    </select>
+    <select id="selectParticipantsByMatchId" parameterType="String" resultType="ParticipantVo">
+        SELECT `match_id` AS 'matchId', `part_puuid` AS 'puuid', `part_champ_id` AS 'champId', `part_champ_level` AS 'champLevel',
+                `kill`, `death`, `assist`
+        FROM `PARTICIPANT` WHERE `match_id` = #{matchId} LIMIT 10;
+    </select>
+    <select id="selectParticipantsItemIdByMatchIdAndPuuid" parameterType="String" resultType="Integer">
+        SELECT `item_id`
+        FROM `PARTICIPANT_ITEM`
+        WHERE `match_id` = #{matchId} AND `part_puuid` = #{puuid}
+        ORDER BY `item_order` ASC LIMIT 7;
+    </select>
+
+    <insert id="insert" parameterType="Map">
+        INSERT IGNORE INTO `MATCH`(`match_id`, `game_creation`, `game_duration`, `created_at`, `updated_at`)
+               VALUES (#{matchId}, #{gameCreation}, #{gameDuration}, NOW(), NOW());
+    </insert>
+    <insert id="insertParticipant" parameterType="ParticipantVo">
+        INSERT IGNORE INTO `PARTICIPANT`(`match_id`, `part_puuid`, `part_champ_id`, `part_champ_level`, `kill`, `death`, `assist`)
+               VALUES (#{matchId}, #{puuid}, #{champId}, #{champLevel}, #{kill}, #{death}, #{assist});
+    </insert>
+    <insert id="insertParticipantItem" parameterType="ParticipantItemVo">
+        INSERT IGNORE INTO `PARTICIPANT_ITEM`(`match_id`, `part_puuid`, `item_order`, `item_id`)
+               VALUES (#{matchId}, #{puuid}, #{itemOrder}, #{itemId});
     </insert>
 </mapper>
