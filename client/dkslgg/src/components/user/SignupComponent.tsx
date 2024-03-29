@@ -43,6 +43,7 @@ const SignupComponent: React.FC<{
     email: false,
   });
   const infoElement = useRef<HTMLImageElement>(null);
+  // const debounce = useDebounce();
 
   useEffect(() => {
     const infoLabel = document.getElementById('info-label');
@@ -56,6 +57,7 @@ const SignupComponent: React.FC<{
       });
     }
   }, []);
+  console.log('HI');
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -63,9 +65,10 @@ const SignupComponent: React.FC<{
       ...getter,
       [name]: value,
     });
+    console.log(checked);
 
     let result = false;
-    let pwCheck = false;
+    let pwCheck = checked.passwordCheck;
     if (name == 'name') result = nameValidationCheck(value);
     else if (name == 'clientId') result = idValidationCheck(value);
     else if (name == 'password') {
