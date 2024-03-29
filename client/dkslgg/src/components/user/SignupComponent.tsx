@@ -6,7 +6,7 @@ import * as S from '@/styles/user/signup.style';
 import Swal from 'sweetalert2';
 // Validation
 import {
-  emailVaildationCheck,
+  emailValidationCheck,
   idValidationCheck,
   nameValidationCheck,
   phoneValidationCheck,
@@ -78,7 +78,7 @@ const SignupComponent: React.FC<{
     } else if (name == 'phone') {
       result = phoneValidationCheck(value);
     } else if (name == 'email') {
-      result = emailVaildationCheck(value);
+      result = emailValidationCheck(value);
     } else {
       result = pwEqualValidationCheck(getter.password, value);
     }
