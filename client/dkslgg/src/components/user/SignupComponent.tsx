@@ -2,8 +2,6 @@
 import { useMemo, useState, useEffect, useRef } from 'react';
 // Styled
 import * as S from '@/styles/user/signup.style';
-// Swal
-import Swal from 'sweetalert2';
 // Validation
 import {
   emailValidationCheck,
@@ -13,26 +11,18 @@ import {
   pwEqualValidationCheck,
   pwValidationCheck,
 } from '../../services/ValidationService';
+import useDebounce from '@/hooks/useDebounce';
+import {
+  SignupComponentProps,
+  SignupFields,
+} from '@/types/component/user.types';
 
-const SignupComponent: React.FC<{
-  getter: {
-    clientId: string;
-    password: string;
-    name: string;
-    passwordCheck: string;
-    phone: string;
-    email: string;
-  };
-  setter: (args: {
-    clientId: string;
-    password: string;
-    name: string;
-    passwordCheck: string;
-    phone: string;
-    email: string;
-  }) => void;
-  onSignup: () => void;
-}> = ({ getter, setter, onSignup }) => {
+const SignupComponent: React.FC<SignupComponentProps> = ({
+  getter,
+  setter,
+  onSignup,
+  onInfo,
+}) => {
   const num = useMemo(() => Math.floor(Math.random() * 5) + 1, []);
   const [checked, setChecked] = useState({
     name: false,
@@ -43,7 +33,65 @@ const SignupComponent: React.FC<{
     email: false,
   });
   const infoElement = useRef<HTMLImageElement>(null);
-  // const debounce = useDebounce();
+  const [inputValues, setInputValues] = useState({ ...getter, type: '' });
+  const debouncedValues = useDebounce<SignupFields>(inputValues, 800);
+
+  useEffect(() => {
+    setter({
+      clientId: debouncedValues.clientId,
+      password: debouncedValues.password,
+      name: debouncedValues.name,
+      passwordCheck: debouncedValues.passwordCheck,
+      phone: debouncedValues.phone,
+      email: debouncedValues.email,
+    });
+
+    const type = debouncedValues.type;
+    const value = debouncedValues[type];
+
+    let result = false;
+    let pwCheck = checked.passwordCheck;
+
+    switch (type) {
+      case 'name':
+        result = nameValidationCheck(value);
+        break;
+      case 'clientId':
+        result = idValidationCheck(value);
+        break;
+      case 'password':
+        result = pwValidationCheck(value);
+        if (pwEqualValidationCheck(value, debouncedValues.passwordCheck))
+          pwCheck = true;
+        else pwCheck = false;
+        break;
+      case 'phone':
+        result = phoneValidationCheck(value);
+        break;
+      case 'email':
+        result = emailValidationCheck(value);
+        break;
+      default:
+        result = pwEqualValidationCheck(
+          debouncedValues.password,
+          debouncedValues.passwordCheck
+        );
+        break;
+    }
+
+    if (type === 'passwordCheck') {
+      setChecked({
+        ...checked,
+        ['passwordCheck']: result,
+      });
+    } else {
+      setChecked({
+        ...checked,
+        [type]: result,
+        ['passwordCheck']: pwCheck,
+      });
+    }
+  }, [debouncedValues, setter]);
 
   useEffect(() => {
     const infoLabel = document.getElementById('info-label');
@@ -57,86 +105,14 @@ const SignupComponent: React.FC<{
       });
     }
   }, []);
-  console.log('HI');
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setter({
-      ...getter,
+
+    setInputValues({
+      ...inputValues,
       [name]: value,
-    });
-    console.log(checked);
-
-    let result = false;
-    let pwCheck = checked.passwordCheck;
-    if (name == 'name') result = nameValidationCheck(value);
-    else if (name == 'clientId') result = idValidationCheck(value);
-    else if (name == 'password') {
-      result = pwValidationCheck(value);
-      if (pwEqualValidationCheck(value, getter.passwordCheck)) pwCheck = true;
-      else pwCheck = false;
-    } else if (name == 'phone') {
-      result = phoneValidationCheck(value);
-    } else if (name == 'email') {
-      result = emailValidationCheck(value);
-    } else {
-      result = pwEqualValidationCheck(getter.password, value);
-    }
-
-    if (name == 'passwordCheck') {
-      setChecked({
-        ...checked,
-        ['passwordCheck']: result,
-      });
-    } else {
-      setChecked({
-        ...checked,
-        [name]: result,
-        ['passwordCheck']: pwCheck,
-      });
-    }
-  };
-
-  const onInfo = async () => {
-    const steps = ['1', '2', '3', '4', '5'];
-    const Queue = Swal.mixin({
-      progressSteps: steps,
-      confirmButtonText: '다음',
-      color: 'var(--maincolor-depth1)',
-      iconColor: 'var(--maincolor-depth1)',
-      confirmButtonColor: 'var(--maincolor-depth1)',
-      showClass: { backdrop: 'swal2-noanimation' },
-      hideClass: { backdrop: 'swal2-noanimation' },
-    });
-
-    await Queue.fire({
-      title: '닉네임',
-      text: '리그오브레전드 소환사명을 입력해주세요.',
-      currentProgressStep: 0,
-      showClass: { backdrop: 'swal2-noanimation' },
-    });
-    await Queue.fire({
-      title: '아이디',
-      text: '영어, 숫자를 조합해 20자 이하로 설정해주세요.',
-      currentProgressStep: 1,
-    });
-    await Queue.fire({
-      title: '비밀번호',
-      text: '영어, 숫자, 특수문자를 조합해 8자 이상, 20자 이하로 설정해주세요.',
-      currentProgressStep: 2,
-    });
-    await Queue.fire({
-      title: '전화번호',
-      text: '"-"를 뺀 숫자만 입력해주세요',
-      currentProgressStep: 3,
-    });
-    await Queue.fire({
-      title: '이메일',
-      text: '본인의 이메일을 양식에 맞게 입력해주세요.',
-      currentProgressStep: 4,
-      confirmButtonText: '확인',
-      confirmButtonColor: 'var(--maincolor-depth1)',
-      showClass: { backdrop: 'swal2-noanimation' },
+      type: name,
     });
   };
 

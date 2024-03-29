@@ -61,7 +61,7 @@ const UserContainer = () => {
         iconColor: 'var(--maincolor-depth1)',
         confirmButtonColor: 'var(--maincolor-depth1)',
       });
-      navigate('/');
+      navigate('/user/signin');
     }
   }, [navigate, signup]);
 
@@ -95,9 +95,52 @@ const UserContainer = () => {
     });
   }, [auth, url, path, navigate]);
 
+  const onInfo = async () => {
+    const steps = ['1', '2', '3', '4', '5'];
+    const Queue = Swal.mixin({
+      progressSteps: steps,
+      confirmButtonText: '다음',
+      color: 'var(--maincolor-depth1)',
+      iconColor: 'var(--maincolor-depth1)',
+      confirmButtonColor: 'var(--maincolor-depth1)',
+      showClass: { backdrop: 'swal2-noanimation' },
+      hideClass: { backdrop: 'swal2-noanimation' },
+    });
+
+    await Queue.fire({
+      title: '닉네임',
+      text: '리그오브레전드 소환사명을 입력해주세요.',
+      currentProgressStep: 0,
+      showClass: { backdrop: 'swal2-noanimation' },
+    });
+    await Queue.fire({
+      title: '아이디',
+      text: '영어, 숫자를 조합해 20자 이하로 설정해주세요.',
+      currentProgressStep: 1,
+    });
+    await Queue.fire({
+      title: '비밀번호',
+      text: '영어, 숫자, 특수문자를 조합해 8자 이상, 20자 이하로 설정해주세요.',
+      currentProgressStep: 2,
+    });
+    await Queue.fire({
+      title: '전화번호',
+      text: '"-"를 뺀 숫자만 입력해주세요',
+      currentProgressStep: 3,
+    });
+    await Queue.fire({
+      title: '이메일',
+      text: '본인의 이메일을 양식에 맞게 입력해주세요.',
+      currentProgressStep: 4,
+      confirmButtonText: '확인',
+      confirmButtonColor: 'var(--maincolor-depth1)',
+      showClass: { backdrop: 'swal2-noanimation' },
+    });
+  };
+
   return (
     <>
-      {path == '/user/signin' ? (
+      {path === '/user/signin' ? (
         // 로그인 페이지
         <SigninComponent
           getter={signin}
@@ -110,6 +153,7 @@ const UserContainer = () => {
           getter={signup}
           setter={setSignup}
           onSignup={onSignup}
+          onInfo={onInfo}
         />
       )}
     </>
