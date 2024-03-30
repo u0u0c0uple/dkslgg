@@ -197,7 +197,7 @@ const SignupComponent: React.FC<SignupComponentProps> = ({
         type: name,
       });
     },
-    [setInputValues]
+    [debouncedValues]
   );
 
   return (

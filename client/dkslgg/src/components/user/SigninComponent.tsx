@@ -22,7 +22,7 @@ const SigninComponent: React.FC<{
         [name]: value,
       });
     },
-    [setter]
+    [getter, setter]
   );
 
   return (
