@@ -72,7 +72,7 @@ button:disabled {
 a {
   text-decoration: none;
   color: black;
-  transition: all .3s;
+  transition: all .2s;
 }
 
 a:link { color: black; }
