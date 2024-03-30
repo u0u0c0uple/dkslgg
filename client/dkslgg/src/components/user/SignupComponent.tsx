@@ -1,5 +1,11 @@
 // React
-import React, { useMemo, useState, useEffect, useRef } from 'react';
+import React, {
+  useMemo,
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+} from 'react';
 // Styled
 import * as S from '@/styles/user/signup.style';
 // Validation
@@ -11,7 +17,9 @@ import {
   pwEqualValidationCheck,
   pwValidationCheck,
 } from '../../services/ValidationService';
+// hooks
 import useDebounce from '@/hooks/useDebounce';
+// Type
 import {
   SignupComponentProps,
   SignupFields,
@@ -179,15 +187,18 @@ const SignupComponent: React.FC<SignupComponentProps> = ({
     }
   }, []);
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+  const onChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
 
-    setInputValues({
-      ...inputValues,
-      [name]: value,
-      type: name,
-    });
-  };
+      setInputValues({
+        ...inputValues,
+        [name]: value,
+        type: name,
+      });
+    },
+    [setInputValues]
+  );
 
   return (
     <S.SignupLayout $bgnum={num}>
