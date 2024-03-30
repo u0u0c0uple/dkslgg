@@ -102,7 +102,7 @@ const HeaderComponent = () => {
           <div className="search-input"></div>
         ) : (
           <div className="search-input">
-            <input placeholder="소환사명 입력하기" ref={search} />
+            <input placeholder="소환사 전적 검색하기" ref={search} />
             <img
               src="/image/search.svg"
               onClick={() =>
