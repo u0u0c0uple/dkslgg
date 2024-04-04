@@ -27,57 +27,11 @@ import {
 
 const InputFieldsForm: React.FC<{
   debouncedValues: SignupFields;
+  checked: { [key: string]: boolean };
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }> = React.memo(
-  ({ debouncedValues, onChange }) => {
-    const [checked, setChecked] = useState<{
-      [key: string]: boolean;
-    }>({
-      name: false,
-      clientId: false,
-      password: false,
-      passwordCheck: false,
-      phone: false,
-      email: false,
-    });
-
-    useEffect(() => {
-      let checks = { ...checked };
-      let result = false;
-
-      Object.keys(debouncedValues).forEach((key) => {
-        const value = debouncedValues[key];
-        switch (key) {
-          case 'name':
-            result = nameValidationCheck(value);
-            break;
-          case 'clientId':
-            result = idValidationCheck(value);
-            break;
-          case 'password':
-            result = pwValidationCheck(value);
-            checks['passwordCheck'] = pwEqualValidationCheck(
-              value,
-              debouncedValues.passwordCheck
-            );
-            break;
-          case 'phone':
-            result = phoneValidationCheck(value);
-            break;
-          case 'email':
-            result = emailValidationCheck(value);
-            break;
-          case 'passwordCheck':
-            result = pwEqualValidationCheck(debouncedValues.password, value);
-            break;
-          default:
-            break;
-        }
-        checks[key] = result;
-      });
-
-      setChecked(checks);
-    }, [debouncedValues]);
+  ({ debouncedValues, checked, onChange }) => {
+    console.log(debouncedValues);
 
     return (
       <div>
@@ -146,8 +100,7 @@ const InputFieldsForm: React.FC<{
   },
   (prevProps, nextProps) => {
     return (
-      JSON.stringify(prevProps.debouncedValues) ===
-      JSON.stringify(nextProps.debouncedValues)
+      JSON.stringify(prevProps.checked) === JSON.stringify(nextProps.checked)
     );
   }
 );
@@ -160,7 +113,17 @@ const SignupComponent: React.FC<SignupComponentProps> = ({
 }) => {
   const num = useMemo(() => Math.floor(Math.random() * 5) + 1, []);
   const infoElement = useRef<HTMLImageElement>(null);
-  const [inputValues, setInputValues] = useState({ ...getter, type: '' });
+  const [inputValues, setInputValues] = useState({ ...getter });
+  const [checked, setChecked] = useState<{
+    [key: string]: boolean;
+  }>({
+    name: false,
+    clientId: false,
+    password: false,
+    passwordCheck: false,
+    phone: false,
+    email: false,
+  });
   const debouncedValues = useDebounce<SignupFields>(inputValues, 800);
 
   useEffect(() => {
@@ -172,6 +135,42 @@ const SignupComponent: React.FC<SignupComponentProps> = ({
       phone: debouncedValues.phone,
       email: debouncedValues.email,
     });
+
+    let checks = { ...checked };
+    let result = false;
+
+    Object.keys(debouncedValues).forEach((key) => {
+      const value = debouncedValues[key];
+      switch (key) {
+        case 'name':
+          result = nameValidationCheck(value);
+          break;
+        case 'clientId':
+          result = idValidationCheck(value);
+          break;
+        case 'password':
+          result = pwValidationCheck(value);
+          checks['passwordCheck'] = pwEqualValidationCheck(
+            value,
+            debouncedValues.passwordCheck
+          );
+          break;
+        case 'phone':
+          result = phoneValidationCheck(value);
+          break;
+        case 'email':
+          result = emailValidationCheck(value);
+          break;
+        case 'passwordCheck':
+          result = pwEqualValidationCheck(debouncedValues.password, value);
+          break;
+        default:
+          break;
+      }
+      checks[key] = result;
+    });
+
+    setChecked(checks);
   }, [debouncedValues, setter]);
 
   useEffect(() => {
@@ -194,7 +193,6 @@ const SignupComponent: React.FC<SignupComponentProps> = ({
       setInputValues({
         ...inputValues,
         [name]: value,
-        type: name,
       });
     },
     [debouncedValues]
@@ -220,6 +218,7 @@ const SignupComponent: React.FC<SignupComponentProps> = ({
         <S.SignupInputBox>
           <InputFieldsForm
             debouncedValues={debouncedValues}
+            checked={checked}
             onChange={onChange}
           />
           <S.SignupBtnBox>
