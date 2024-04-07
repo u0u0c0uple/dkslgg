@@ -1,7 +1,7 @@
 // types
 import { IValidationUser } from '@/types/service/types';
 
-const emailVaildationCheck = (email: string) => {
+const emailValidationCheck = (email: string) => {
   // email Checking
   const regexEmail = new RegExp(
     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -126,7 +126,7 @@ const userValidationCheck = (user: IValidationUser) => {
 export {
   userValidationCheck,
   pwValidationCheck,
-  emailVaildationCheck,
+  emailValidationCheck,
   pwEqualValidationCheck,
   idValidationCheck,
   phoneValidationCheck,

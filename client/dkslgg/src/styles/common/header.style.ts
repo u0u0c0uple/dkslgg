@@ -16,7 +16,7 @@ export const HeaderLayout = styled.div`
     height: 75%;
     margin: auto;
     margin-left: 2rem;
-    transition: all 0.5s;
+    transition: all 0.25s;
     flex-basis: 20%;
     text-align: end;
 
@@ -34,7 +34,7 @@ export const HeaderLayout = styled.div`
 export const MenuContainer = styled.div`
   display: flex;
   width: 40%;
-  height: inherit;
+  height: 100%;
   justify-content: space-around;
   flex-basis: 50%;
   align-items: center;
@@ -79,7 +79,7 @@ export const MenuContainer = styled.div`
     margin-top: 1rem;
     margin-bottom: auto;
     align-items: center;
-    transition: all 0.5s;
+    transition: all 0.25s;
 
     &:hover {
       transform: scale(1.1);

@@ -1,5 +1,5 @@
 // React
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 // Styled
 import * as S from '@/styles/user/signin.style';
 
@@ -13,14 +13,17 @@ const SigninComponent: React.FC<{
 }> = ({ getter, setter, onSignIn }) => {
   const num = useMemo(() => Math.floor(Math.random() * 5) + 1, []);
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+  const onChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
 
-    setter({
-      ...getter,
-      [name]: value,
-    });
-  };
+      setter({
+        ...getter,
+        [name]: value,
+      });
+    },
+    [getter, setter]
+  );
 
   return (
     <S.SigninLayout $bgnum={num}>
