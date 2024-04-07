@@ -18,11 +18,11 @@ public record LbtiQuestionReadResponseDto(
     @Builder
     public LbtiQuestionReadResponseDto(String content, List<LbtiAnswerReadResponseDto> answerList) {
         if (content == null || content.isBlank()) {
-            log.error("LbtiQuestionReadDto Content 유효하지 않음");
+            log.error("LbtiQuestionReadResponseDto Content 유효하지 않음");
             throw new LbtiException(ErrorMessage.QUESTION_INVALID);
         }
         if(answerList == null || answerList.isEmpty()) {
-            log.error("LbtiQuestionReadDto Answer List 유효하지 않음");
+            log.error("LbtiQuestionReadResponseDto Answer List 유효하지 않음");
             throw new LbtiException(ErrorMessage.QUESTION_INVALID);
         }
         this.content = content;
