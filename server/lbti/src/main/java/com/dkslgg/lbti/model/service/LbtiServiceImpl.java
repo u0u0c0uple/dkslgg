@@ -2,9 +2,12 @@ package com.dkslgg.lbti.model.service;
 
 import com.dkslgg.lbti.model.dto.response.LbtiAnswerReadResponseDto;
 import com.dkslgg.lbti.model.dto.response.LbtiQuestionReadResponseDto;
+import com.dkslgg.lbti.model.dto.response.LbtiResultReadResponseDto;
 import com.dkslgg.lbti.model.entity.LbtiAnswer;
 import com.dkslgg.lbti.model.entity.LbtiQuestion;
+import com.dkslgg.lbti.model.entity.LbtiResult;
 import com.dkslgg.lbti.model.repository.LbtiQuestionRepository;
+import com.dkslgg.lbti.model.repository.LbtiResultRepository;
 import com.dkslgg.lbti.util.ErrorMessage;
 import com.dkslgg.lbti.util.LbtiException;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +23,7 @@ import java.util.List;
 @Slf4j
 public class LbtiServiceImpl implements LbtiService {
     private final LbtiQuestionRepository lbtiQuestionRepository;
+    private final LbtiResultRepository lbtiResultRepository;
 
     @Override
     @Transactional(rollbackFor = LbtiException.class)
@@ -61,5 +65,20 @@ public class LbtiServiceImpl implements LbtiService {
         }
 
         return lbtiQuestionDtoList;
+    }
+
+    @Override
+    public LbtiResultReadResponseDto readLbtiResult(String lbtiResultStr) {
+        LbtiResult lbtiResult = lbtiResultRepository.findById(lbtiResultStr).orElseThrow(() -> {
+            log.error("LbtiServiceImpl.readLbtiResult() LBTI 문자열 유효하지 않음");
+            throw new LbtiException(ErrorMessage.RESULT_NOT_FOUND);
+        });
+
+        return LbtiResultReadResponseDto.builder()
+                .code(lbtiResult.getCode())
+                .title(lbtiResult.getTitle())
+                .content(lbtiResult.getContent())
+                .champCode(lbtiResult.getChampCode())
+                .build();
     }
 }
