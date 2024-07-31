@@ -24,7 +24,17 @@ public class RiotApiUtil {
     }
 
     public String formatRiotId(String riotId) {
-        return (riotId.length() == 2) ? riotId.charAt(0) + " " + riotId.charAt(1) : riotId;
+        return (riotId != null && riotId.length() == 2) ? riotId.charAt(0) + " " + riotId.charAt(1) : riotId;
+    }
+
+    public AccountDto requestAccountByRiotId(String gameName, String tagLine) {
+        return restClient.get().uri("/riot/account/v1/accounts/by-riot-id/{gameName}/{tagLine}", gameName, tagLine)
+                .retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
+                    throw new RecordException(ErrorMessage.RIOT_ID_NOT_FOUND);
+                }).onStatus(HttpStatusCode::is5xxServerError, (request, response) -> {
+                    throw new RecordException(ErrorMessage.RIOT_API_FAILED);
+                }).body(AccountDto.class);
     }
 
     public AccountDto requestPuuidByRiotId(String gameName, String tagLine) {

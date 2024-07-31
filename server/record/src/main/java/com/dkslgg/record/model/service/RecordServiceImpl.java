@@ -5,8 +5,10 @@ import com.dkslgg.record.model.dao.MatchDao;
 import com.dkslgg.record.model.dto.api.AccountDto;
 import com.dkslgg.record.model.dto.api.MatchDto;
 import com.dkslgg.record.model.dto.api.ParticipantDto;
+import com.dkslgg.record.model.dto.command.ReadAccountCommandDto;
 import com.dkslgg.record.model.dto.response.MatchReadResponseDto;
 import com.dkslgg.record.model.dto.response.ParticipantReadResponseDto;
+import com.dkslgg.record.model.dto.response.AccountResponseDto;
 import com.dkslgg.record.model.vo.AccountVo;
 import com.dkslgg.record.model.vo.MatchVo;
 import com.dkslgg.record.model.vo.ParticipantItemVo;
@@ -23,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +35,37 @@ public class RecordServiceImpl implements RecordService {
     private final RiotApiUtil riotApiUtil;
     private final AccountDao accountDao;
     private final MatchDao matchDao;
+
+    /**
+     * 라이엇 회원 정보를 조회하는 메소드
+     * PUUID, 닉네임, 태그로 구분
+     */
+    @Override
+    public AccountResponseDto readAccount(ReadAccountCommandDto readAccountCommandDto) {
+        String[] idSplit = readAccountCommandDto.riotId().split("#");
+        if (idSplit.length != 2) {  // 게임 닉네임과 태그 이름이 정상적으로 삽입되지 않았을 경우
+            log.error("RecordService.readPuuidByRiotId id 분할 안 됨.");
+            throw new RecordException(ErrorMessage.RIOT_ID_NOT_FOUND);
+        }
+
+        /* 게임 닉네임과 태그 이름 분리 */
+        String gameName = riotApiUtil.formatRiotId(idSplit[0]);
+        String tagLine = riotApiUtil.formatRiotId(idSplit[1]);// 두글자 닉네임 한 칸 띄우기
+
+        AccountVo accountVo = accountDao.selectAccount(gameName, tagLine).orElse(null);
+        
+        if(accountVo == null) { //조회되지 않았을 때
+            AccountDto accountDto = riotApiUtil.requestAccountByRiotId(gameName, tagLine);
+            if (accountDto == null) {  // 해당 유저 정보가 삽입되지 않았을 경우
+                log.error("해당 회원 API 조회 실패 : {}#{}", gameName, tagLine);
+                throw new RecordException(ErrorMessage.RIOT_API_FAILED);
+            }
+            accountVo = new AccountVo(accountDto.puuid(), accountDto.gameName(), accountDto.tagLine());
+            accountDao.insertAccount(accountVo);
+        }
+
+        return AccountResponseDto.from(accountVo);
+    }
 
     /**
      * 닉네임을 통해 PUUID를 조회하는 메소드

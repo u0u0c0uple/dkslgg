@@ -4,6 +4,14 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.dkslgg.record.model.dao.AccountDao">
+    <select id="selectAccount" parameterType="String" resultType="AccoutVo">
+        SELECT * FROM ACCOUNT WHERE game_name = #{gameName} AND tag_line = #{tagLine};
+    </select>
+    <insert id="insertAccount" parameterType="AccountVo">
+        INSERT INTO ACCOUNT(puuid, game_name, tag_line, created_at, updated_at)
+        VALUES (#{puuid}, #{gameName}, #{tagLine}, NOW(), NOW())
+        ON DUPLICATE KEY UPDATE game_name = #{gameName}, tag_line = #{tagLine}, updated_at = NOW();
+    </insert>
     <select id="selectPuuidByGameNameAndTagLine" parameterType="String" resultType="String">
         SELECT `puuid` FROM `ACCOUNT` WHERE `game_name` = #{gameName} AND `tag_line` = #{tagLine};
     </select>
