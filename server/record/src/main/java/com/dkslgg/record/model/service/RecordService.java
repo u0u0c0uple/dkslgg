@@ -8,7 +8,6 @@ import java.util.List;
 
 public interface RecordService {
     AccountResponseDto readAccount(ReadAccountCommandDto readAccountCommandDto);
-    String readPuuidByRiotId(String riotId);
     List<String> readMatchListByPuuid(String puuid, String startTime);
     MatchReadResponseDto readMatchByMatchId(String matchId);
 }

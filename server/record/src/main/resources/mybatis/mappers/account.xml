@@ -12,9 +12,6 @@
         VALUES (#{puuid}, #{gameName}, #{tagLine}, NOW(), NOW())
         ON DUPLICATE KEY UPDATE game_name = #{gameName}, tag_line = #{tagLine}, updated_at = NOW();
     </insert>
-    <select id="selectPuuidByGameNameAndTagLine" parameterType="String" resultType="String">
-        SELECT `puuid` FROM `ACCOUNT` WHERE `game_name` = #{gameName} AND `tag_line` = #{tagLine};
-    </select>
     <select id="selectByPuuid" parameterType="String" resultType="AccountVo">
         SELECT `puuid`, `game_name` AS 'gameName', `tag_line` AS 'tagLine',
                 `created_at` AS 'createdAt', `updated_at` AS 'updatedAt'

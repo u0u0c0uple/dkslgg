@@ -34,7 +34,6 @@ public class RecordController {
         log.info("Request Riot Id : {}", riotId);
         // 1. 라이엇 아이디를 통해 회원 정보 찾기
         AccountResponseDto accountResponseDto = recordService.readAccount(new ReadAccountCommandDto(riotId));
-        //String puuid = recordService.readPuuidByRiotId(riotId);
         
         // 2. PUUID를 통한 최근 전적 10개 조회
         List<String> matchIdList = recordService.readMatchListByPuuid(accountResponseDto.puuid(), "");

@@ -12,7 +12,6 @@ import java.util.Optional;
 public interface AccountDao {
     Optional<AccountVo> selectAccount(String gameName, String tagLine) throws DataAccessException;
     void insertAccount(AccountVo accountVo) throws DataAccessException;
-    String selectPuuidByGameNameAndTagLine(String gameName, String tagLine) throws DataAccessException;
     AccountVo selectByPuuid(String puuid) throws DataAccessException;
     int countByPuuid(String puuid) throws DataAccessException;
     void insert(String puuid, String gameName, String tagLine) throws DataAccessException;
