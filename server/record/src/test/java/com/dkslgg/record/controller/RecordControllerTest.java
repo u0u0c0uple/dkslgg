@@ -16,6 +16,6 @@ public class RecordControllerTest {
     public void readRecordListBySummonerIdTest() {
         // Given
         String summonerId = "뇽 뇽#야 니";
-        recordController.readRecordListByRiotId(summonerId);
+        recordController.readMatchList(summonerId);
     }
 }

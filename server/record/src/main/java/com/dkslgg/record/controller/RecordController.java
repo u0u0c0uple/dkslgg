@@ -1,6 +1,8 @@
 package com.dkslgg.record.controller;
 
+import com.dkslgg.record.model.dto.command.ReadAccountCommandDto;
 import com.dkslgg.record.model.dto.response.MatchReadResponseDto;
+import com.dkslgg.record.model.dto.response.AccountResponseDto;
 import com.dkslgg.record.model.service.RecordService;
 import com.dkslgg.record.util.ErrorMessage;
 import com.dkslgg.record.util.RecordException;
@@ -23,14 +25,16 @@ public class RecordController {
     private final RecordService recordService;
 
     @GetMapping("/{riotId}")
-    public ResponseEntity<?> readRecordListByRiotId(@PathVariable String riotId) {
+    public ResponseEntity<?> readMatchList(@PathVariable String riotId) {
         if(riotId.isBlank() || !riotId.matches(RegexPattern.riotId)) {
+            log.error("라이엇 아이디 형식이 맞지 않음 : {}", riotId);
             throw new RecordException(ErrorMessage.RIOT_ID_NOT_FOUND);
         }
 
         log.info("Request Riot Id : {}", riotId);
-        // 1. 라이엇 아이디를 통해 PUUID 찾기
-        String puuid = recordService.readPuuidByRiotId(riotId);
+        // 1. 라이엇 아이디를 통해 회원 정보 찾기
+        AccountResponseDto accountResponseDto = recordService.readAccount(new ReadAccountCommandDto(riotId));
+        //String puuid = recordService.readPuuidByRiotId(riotId);
         
         // 2. PUUID를 통한 최근 전적 10개 조회
         List<String> matchIdList = recordService.readMatchListByPuuid(puuid, "");
