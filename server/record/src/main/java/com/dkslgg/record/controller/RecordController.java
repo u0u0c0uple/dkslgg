@@ -37,7 +37,7 @@ public class RecordController {
         //String puuid = recordService.readPuuidByRiotId(riotId);
         
         // 2. PUUID를 통한 최근 전적 10개 조회
-        List<String> matchIdList = recordService.readMatchListByPuuid(puuid, "");
+        List<String> matchIdList = recordService.readMatchListByPuuid(accountResponseDto.puuid(), "");
 
         // 3. 전적 ID를 통한 전적 정보 조회
         List<MatchReadResponseDto> matchList = new ArrayList<>();
