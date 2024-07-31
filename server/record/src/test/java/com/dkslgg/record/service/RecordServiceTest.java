@@ -1,5 +1,7 @@
 package com.dkslgg.record.service;
 
+import com.dkslgg.record.model.dto.command.ReadAccountCommandDto;
+import com.dkslgg.record.model.dto.response.AccountResponseDto;
 import com.dkslgg.record.model.dto.response.MatchReadResponseDto;
 import com.dkslgg.record.model.service.RecordService;
 import org.junit.jupiter.api.Assertions;
@@ -16,6 +18,17 @@ public class RecordServiceTest {
     @Autowired
     RecordService recordService;
 
+    @Test
+    @Transactional
+    public void readAccount() {
+        // Given
+        ReadAccountCommandDto readAccountCommandDto = new ReadAccountCommandDto("야 니#뇽 뇽");
+
+        AccountResponseDto accountResponseDto = recordService.readAccount(readAccountCommandDto);
+        System.out.println(accountResponseDto);
+
+        Assertions.assertNotNull(accountResponseDto);
+    }
     @Test
     @Transactional
     public void readPuuidByRiotId() {
