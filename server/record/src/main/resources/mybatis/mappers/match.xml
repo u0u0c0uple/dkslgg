@@ -4,39 +4,56 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.dkslgg.record.model.dao.MatchDao">
-    <select id="countByMatchId" parameterType="String" resultType="Integer">
-        SELECT count(*) FROM `MATCH` WHERE `match_id` = #{matchId};
-    </select>
-    <select id="selectMatchIdByPuuid" parameterType="String" resultType="String">
-        SELECT DISTINCT `match_id` FROM `PARTICIPANT` WHERE `part_puuid` = #{puuid} LIMIT 10;
-    </select>
-    <select id="selectByMatchId" parameterType="String" resultType="MatchVo">
-        SELECT `match_id` AS 'matchId', `game_creation` AS 'gameCreation', `game_duration` AS 'gameDuration',
-                `created_at` AS 'createdAt', `updated_at` AS 'updatedAt'
-        FROM `MATCH` WHERE `match_id` = #{matchId} LIMIT 1;
-    </select>
-    <select id="selectParticipantsByMatchId" parameterType="String" resultType="ParticipantVo">
-        SELECT `match_id` AS 'matchId', `part_puuid` AS 'puuid', `part_champ_id` AS 'champId', `part_champ_level` AS 'champLevel',
-                `kill`, `death`, `assist`
-        FROM `PARTICIPANT` WHERE `match_id` = #{matchId} LIMIT 10;
-    </select>
-    <select id="selectParticipantsItemIdByMatchIdAndPuuid" parameterType="String" resultType="Integer">
-        SELECT `item_id`
-        FROM `PARTICIPANT_ITEM`
-        WHERE `match_id` = #{matchId} AND `part_puuid` = #{puuid}
-        ORDER BY `item_order` ASC LIMIT 7;
-    </select>
+    <resultMap id="matchMap" type="MatchVo">
+        <id property="id" column="id" />
+        <result property="creation" column="creation" />
+        <result property="duration" column="duration" />
+        <collection property="participantList" resultMap="participantMap"/>
+    </resultMap>
+    <resultMap id="participantMap" type="ParticipantVo">
+        <id property="puuid" column="puuid" />
+        <result property="champId" column="champ_id" />
+        <result property="champLevel" column="champ_level" />
+        <result property="kill" column="kill" />
+        <result property="death" column="death" />
+        <result property="assist" column="assist" />
+        <result property="teamId" column="team_id" />
+        <collection property="account" resultMap="accountMap"/>
+        <collection property="itemList" resultMap="participantItemMap"/>
+    </resultMap>
+    <resultMap id="accountMap" type="AccountVo">
+        <id property="puuid" column="puuid" />
+        <result property="gameName" column="game_name" />
+        <result property="tagLine" column="tag_line" />
+    </resultMap>
+    <resultMap id="participantItemMap" type="ParticipantItemVo">
+        <id property="itemOrder" column="item_order" />
+        <result property="itemId" column="item_id" />
+    </resultMap>
 
-    <insert id="insert" parameterType="Map">
-        INSERT IGNORE INTO `MATCH`(`match_id`, `game_creation`, `game_duration`, `created_at`, `updated_at`)
-               VALUES (#{matchId}, #{gameCreation}, #{gameDuration}, NOW(), NOW());
+    <select id="selectMatch" parameterType="List" resultMap="matchMap">
+        SELECT M.id, M.creation, M.duration, P.*, A.game_name, A.tag_line, PI.item_order, PI.item_id
+        FROM `MATCH` M
+            LEFT OUTER JOIN PARTICIPANT P ON M.id = P.match_id
+            LEFT OUTER JOIN ACCOUNT A ON P.puuid = A.puuid
+            LEFT OUTER JOIN PARTICIPANT_ITEM PI ON M.id = PI.match_id
+        WHERE M.id IN (<foreach collection="idList" item="item" separator=","> #{item} </foreach>)
+        ORDER BY creation DESC, team_id ASC, item_order ASC;
+    </select>
+    <insert id="insertMatch" parameterType="MatchVo">
+        INSERT `MATCH` VALUES(#{id}, #{creation}, #{duration}, NOW(), NOW())
+        ON DUPLICATE KEY UPDATE id = #{id}, creation = #{creation}, duration = #{duration}, updated_at = NOW();
     </insert>
-    <insert id="insertParticipant" parameterType="ParticipantVo">
-        INSERT IGNORE INTO `PARTICIPANT`(`match_id`, `part_puuid`, `part_champ_id`, `part_champ_level`, `kill`, `death`, `assist`)
-               VALUES (#{matchId}, #{puuid}, #{champId}, #{champLevel}, #{kill}, #{death}, #{assist});
+    <insert id="insertParticipantList" parameterType="List">
+        INSERT PARTICIPANT
+        VALUES <foreach collection="participantList" item="item" separator=",">
+        (#{item.matchId}, #{item.puuid}, #{item.champId}, #{item.champLevel}, #{item.kill}, #{item.death}, #{item.assist}, #{item.teamId})
+    </foreach>;
     </insert>
-    <insert id="insertParticipantItem" parameterType="ParticipantItemVo">
-        INSERT IGNORE INTO `PARTICIPANT_ITEM`(`match_id`, `part_puuid`, `item_order`, `item_id`)
-               VALUES (#{matchId}, #{puuid}, #{itemOrder}, #{itemId});
+    <insert id="insertParticipantItemList" parameterType="List">
+        INSERT PARTICIPANT_ITEM(match_id, puuid, item_order, item_id)
+        VALUES <foreach collection="participantItemList" item="item" separator=",">
+        (#{item.matchId}, #{item.puuid}, #{item.itemOrder}, #{item.itemId})
+    </foreach>;
     </insert>
 </mapper>
