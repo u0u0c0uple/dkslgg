@@ -1,8 +1,8 @@
 package com.dkslgg.record.controller;
 
 import com.dkslgg.record.model.dto.command.ReadAccountCommandDto;
-import com.dkslgg.record.model.dto.response.MatchReadResponseDto;
 import com.dkslgg.record.model.dto.response.AccountResponseDto;
+import com.dkslgg.record.model.dto.response.MatchResponseDto;
 import com.dkslgg.record.model.service.RecordService;
 import com.dkslgg.record.util.ErrorMessage;
 import com.dkslgg.record.util.RecordException;
@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -25,8 +25,8 @@ public class RecordController {
     private final RecordService recordService;
 
     @GetMapping("/{riotId}")
-    public ResponseEntity<?> readMatchList(@PathVariable String riotId) {
-        if(riotId.isBlank() || !riotId.matches(RegexPattern.riotId)) {
+    public ResponseEntity<?> readMatchList(@PathVariable String riotId, @RequestParam(value = "index", required = false) String index) {
+        if (riotId.isBlank() || !riotId.matches(RegexPattern.riotId)) {
             log.error("라이엇 아이디 형식이 맞지 않음 : {}", riotId);
             throw new RecordException(ErrorMessage.RIOT_ID_NOT_FOUND);
         }
@@ -34,15 +34,9 @@ public class RecordController {
         log.info("Request Riot Id : {}", riotId);
         // 1. 라이엇 아이디를 통해 회원 정보 찾기
         AccountResponseDto accountResponseDto = recordService.readAccount(new ReadAccountCommandDto(riotId));
-        
-        // 2. PUUID를 통한 최근 전적 10개 조회
-        List<String> matchIdList = recordService.readMatchListByPuuid(accountResponseDto.puuid(), "");
 
-        // 3. 전적 ID를 통한 전적 정보 조회
-        List<MatchReadResponseDto> matchList = new ArrayList<>();
-        for (String matchId : matchIdList) {
-            matchList.add(recordService.readMatchByMatchId(matchId));
-        }
+        // 2. PUUID를 통한 최근 전적 10개 조회
+        List<MatchResponseDto> matchList = recordService.readMatchList(accountResponseDto.puuid(), index != null && index.matches("[0-9]{1,}") ? Integer.parseInt(index) : 0);
 
         return ResponseEntity.ok(matchList);
     }
