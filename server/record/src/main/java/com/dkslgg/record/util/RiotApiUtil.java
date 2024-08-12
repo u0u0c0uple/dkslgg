@@ -47,13 +47,14 @@ public class RiotApiUtil {
                 }).body(AccountDto.class);
     }
 
-    public List<String> requestMatchListByPuuid(String puuid, String startTime) {
+    public List<String> requestMatchListByPuuid(String puuid, int index) {
         return restClient.get().uri(uriBuilder -> uriBuilder
                         .path("/lol/match/v5/matches/by-puuid/" + puuid + "/ids")
-                        .queryParam("startTime", startTime)
+                        .queryParam("start", index)
                         .queryParam("count", 10)
                         .build()).retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
+                    log.error("해당 유저 존재하지 않음 : {}", puuid);
                     throw new RecordException(ErrorMessage.ACCOUNT_INVALID);
                 }).onStatus(HttpStatusCode::is5xxServerError, (request, response) -> {
                     throw new RecordException(ErrorMessage.ACCOUNT_INVALID);
@@ -65,8 +66,9 @@ public class RiotApiUtil {
         return restClient.get().uri("/lol/match/v5/matches/{matchId}", matchId)
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
-                    throw new RecordException(ErrorMessage.MATCH_INVALID);
+                    log.error("해당 매치 아이디 찾을 수 없음 : {}", matchId);
                 }).onStatus(HttpStatusCode::is5xxServerError, (request, response) -> {
+                    log.error("API 오류");
                     throw new RecordException(ErrorMessage.MATCH_INVALID);
                 }).body(MatchDto.class);
 

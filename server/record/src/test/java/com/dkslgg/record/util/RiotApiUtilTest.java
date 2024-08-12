@@ -22,7 +22,7 @@ public class RiotApiUtilTest {
         // Given
         String puuid = "bm1Qsq2s55EjroxetG56685iGGbDlfnXxHZO1NgrQBsHej_80OaGRSgnhbcI2Jq_0XX4F2Yy5Ek3og";
 
-        List<String> matchList = riotApiUtil.requestMatchListByPuuid(puuid, "");
+        List<String> matchList = riotApiUtil.requestMatchListByPuuid(puuid, 10);
         Assertions.assertFalse(matchList.isEmpty());
     }
 
