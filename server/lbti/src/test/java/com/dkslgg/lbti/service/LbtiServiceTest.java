@@ -1,7 +1,7 @@
 package com.dkslgg.lbti.service;
 
-import com.dkslgg.lbti.model.dto.response.LbtiQuestionReadResponseDto;
-import com.dkslgg.lbti.model.dto.response.LbtiResultReadResponseDto;
+import com.dkslgg.lbti.model.dto.response.LbtiQuestionResponseDto;
+import com.dkslgg.lbti.model.dto.response.LbtiResultResponseDto;
 import com.dkslgg.lbti.model.service.LbtiService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -19,7 +19,7 @@ public class LbtiServiceTest {
     @Test
     @DisplayName("LBTI 문항 조회하는 서비스")
     void readLbtiQuestion() {
-        List<LbtiQuestionReadResponseDto> lbtiQuestionList = lbtiService.readLbtiQuestionList();
+        List<LbtiQuestionResponseDto> lbtiQuestionList = lbtiService.readLbtiQuestionList();
 
         Assertions.assertNotNull(lbtiQuestionList);
         Assertions.assertFalse(lbtiQuestionList.isEmpty());
@@ -29,7 +29,7 @@ public class LbtiServiceTest {
     void readLbtiResult() {
         // given
         String lbtiResultStr = "CMED";
-        LbtiResultReadResponseDto lbtiResult = lbtiService.readLbtiResult(lbtiResultStr);
+        LbtiResultResponseDto lbtiResult = lbtiService.readLbtiResult(lbtiResultStr);
 
         System.out.println(lbtiResult);
         Assertions.assertNotNull(lbtiResult);

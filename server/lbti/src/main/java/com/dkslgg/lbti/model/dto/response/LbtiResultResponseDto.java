@@ -6,28 +6,28 @@ import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public record LbtiResultReadResponseDto(
+public record LbtiResultResponseDto(
         String code,
         String title,
         String content,
         String champCode
 ) {
     @Builder
-    public LbtiResultReadResponseDto(String code, String title, String content, String champCode) {
+    public LbtiResultResponseDto(String code, String title, String content, String champCode) {
         if(code == null || code.length() != 4) {
-            log.error("LbtiResultReadResponseDto Code 유효하지 않음");
+            log.error("LbtiResultResponseDto Code 유효하지 않음");
             throw new LbtiException(ErrorMessage.RESULT_INVALID);
         }
         if(title == null) {
-            log.error("LbtiResultReadResponseDto Title 유효하지 않음");
+            log.error("LbtiResultResponseDto Title 유효하지 않음");
             throw new LbtiException(ErrorMessage.RESULT_INVALID);
         }
         if(content == null) {
-            log.error("LbtiResultReadResponseDto Content 유효하지 않음");
+            log.error("LbtiResultResponseDto Content 유효하지 않음");
             throw new LbtiException(ErrorMessage.RESULT_INVALID);
         }
         if(champCode == null) {
-            log.error("LbtiResultReadResponseDto Champion Code 유효하지 않음");
+            log.error("LbtiResultResponseDto Champion Code 유효하지 않음");
             throw new LbtiException(ErrorMessage.RESULT_INVALID);
         }
         this.code = code;

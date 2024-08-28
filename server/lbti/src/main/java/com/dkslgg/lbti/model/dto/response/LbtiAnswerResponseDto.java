@@ -6,19 +6,19 @@ import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public record LbtiAnswerReadResponseDto(
+public record LbtiAnswerResponseDto(
     String content,
         char itemCode,
     int score
 ) {
     @Builder
-    public LbtiAnswerReadResponseDto(String content, char itemCode, int score) {
+    public LbtiAnswerResponseDto(String content, char itemCode, int score) {
         if(content == null || content.isBlank()) {
-            log.error("LbtiAnswerReadResponseDto Content 유효하지 않음.");
+            log.error("LbtiAnswerResponseDto Content 유효하지 않음.");
             throw new LbtiException(ErrorMessage.QUESTION_INVALID);
         }
         if(score <= 0) {
-            log.error("LbtiAnswerReadResponseDto Score 유효하지 않음.");
+            log.error("LbtiAnswerResponseDto Score 유효하지 않음.");
             throw new LbtiException(ErrorMessage.QUESTION_INVALID);
         }
         this.content = content;

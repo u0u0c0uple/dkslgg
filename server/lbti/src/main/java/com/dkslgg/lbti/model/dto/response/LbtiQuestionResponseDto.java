@@ -10,19 +10,19 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 
 @Slf4j
-public record LbtiQuestionReadResponseDto(
+public record LbtiQuestionResponseDto(
         String content,
-        List<LbtiAnswerReadResponseDto> answerList
+        List<LbtiAnswerResponseDto> answerList
 ) {
 
     @Builder
-    public LbtiQuestionReadResponseDto(String content, List<LbtiAnswerReadResponseDto> answerList) {
+    public LbtiQuestionResponseDto(String content, List<LbtiAnswerResponseDto> answerList) {
         if (content == null || content.isBlank()) {
-            log.error("LbtiQuestionReadResponseDto Content 유효하지 않음");
+            log.error("LbtiQuestionResponseDto Content 유효하지 않음");
             throw new LbtiException(ErrorMessage.QUESTION_INVALID);
         }
         if(answerList == null || answerList.isEmpty()) {
-            log.error("LbtiQuestionReadResponseDto Answer List 유효하지 않음");
+            log.error("LbtiQuestionResponseDto Answer List 유효하지 않음");
             throw new LbtiException(ErrorMessage.QUESTION_INVALID);
         }
         this.content = content;
