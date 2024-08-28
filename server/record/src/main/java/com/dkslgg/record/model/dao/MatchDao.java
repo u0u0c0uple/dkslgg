@@ -12,14 +12,9 @@ import java.util.List;
 @Mapper
 @Repository
 public interface MatchDao {
-    int countByMatchId(String matchId) throws DataAccessException;
-    List<String> selectMatchIdByPuuid(String puuid) throws DataAccessException;
-    MatchVo selectByMatchId(String matchId) throws DataAccessException;
-    List<ParticipantVo> selectParticipantsByMatchId(String matchId) throws DataAccessException;
-    List<Integer> selectParticipantsItemIdByMatchIdAndPuuid(String matchId, String puuid) throws DataAccessException;
-    void insert(String matchId, String gameCreation, long gameDuration) throws DataAccessException;
-
-    void insertParticipant(ParticipantVo participant) throws DataAccessException;
-    void insertParticipantItem(ParticipantItemVo participantItemVo) throws DataAccessException;
+    List<MatchVo> selectMatch(List<String> idList) throws DataAccessException;
+    void insertMatch(MatchVo matchVo) throws DataAccessException;
+    void insertParticipantList(List<ParticipantVo> participantList) throws DataAccessException;
+    void insertParticipantItemList(List<ParticipantItemVo> participantItemList) throws DataAccessException;
 
 }

@@ -6,9 +6,11 @@ import jakarta.persistence.Id;
 import lombok.Getter;
 import org.hibernate.annotations.Comment;
 
+import java.io.Serializable;
+
 @Entity
 @Getter
-public class LbtiResult extends Base {
+public class LbtiResult extends Base implements Serializable {
     @Id
     @Comment("LBTI 결과 코드")
     String code;

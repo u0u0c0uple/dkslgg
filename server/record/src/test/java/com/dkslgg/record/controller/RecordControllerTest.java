@@ -13,9 +13,9 @@ public class RecordControllerTest {
 
     @Test
     @Transactional
-    public void readRecordListBySummonerIdTest() {
+    public void readMatchList() {
         // Given
         String summonerId = "뇽 뇽#야 니";
-        recordController.readRecordListByRiotId(summonerId);
+        recordController.readMatchList(summonerId, "2024-08-11 12:48:16");
     }
 }

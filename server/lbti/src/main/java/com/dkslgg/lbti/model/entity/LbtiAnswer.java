@@ -3,9 +3,11 @@ package com.dkslgg.lbti.model.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+import java.io.Serializable;
+
 @Entity
 @Getter
-public class LbtiAnswer {
+public class LbtiAnswer implements Serializable {
     @Id
     int answerId;
     @ManyToOne

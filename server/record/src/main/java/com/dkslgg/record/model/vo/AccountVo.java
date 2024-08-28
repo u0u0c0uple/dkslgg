@@ -4,21 +4,23 @@ import com.dkslgg.record.util.ErrorMessage;
 import com.dkslgg.record.util.RecordException;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Timestamp;
 
 @Getter
 @Slf4j
+@NoArgsConstructor
+@ToString
 public class AccountVo extends BaseVo {
-    private final String puuid;
-    private final String gameName;
-    private final String tagLine;
+    private String puuid;
+    private String gameName;
+    private String tagLine;
 
     @Builder
-    public AccountVo(String puuid, String gameName, String tagLine, Timestamp createdAt, Timestamp updatedAt) {
-        super(createdAt, updatedAt);
-
+    public AccountVo(String puuid, String gameName, String tagLine) {
         if (puuid == null || puuid.length() != 78) {
             log.error("AccountVo puuid 유효하지 않음.");
             throw new RecordException(ErrorMessage.ACCOUNT_INVALID);

@@ -1,11 +1,11 @@
 package com.dkslgg.lbti.model.service;
 
-import com.dkslgg.lbti.model.dto.response.LbtiQuestionReadResponseDto;
-import com.dkslgg.lbti.model.dto.response.LbtiResultReadResponseDto;
+import com.dkslgg.lbti.model.dto.response.LbtiQuestionResponseDto;
+import com.dkslgg.lbti.model.dto.response.LbtiResultResponseDto;
 
 import java.util.List;
 
 public interface LbtiService {
-    List<LbtiQuestionReadResponseDto> readLbtiQuestionList();
-    LbtiResultReadResponseDto readLbtiResult(String lbtiResult);
+    List<LbtiQuestionResponseDto> readLbtiQuestionList();
+    LbtiResultResponseDto readLbtiResult(String lbtiResult);
 }

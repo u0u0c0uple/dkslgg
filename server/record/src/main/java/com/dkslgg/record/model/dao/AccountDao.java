@@ -5,11 +5,14 @@ import org.apache.ibatis.annotations.Mapper;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
 @Mapper
 @Repository
 public interface AccountDao {
-    String selectPuuidByGameNameAndTagLine(String gameName, String tagLine) throws DataAccessException;
-    AccountVo selectByPuuid(String puuid) throws DataAccessException;
-    int countByPuuid(String puuid) throws DataAccessException;
-    void insert(String puuid, String gameName, String tagLine) throws DataAccessException;
+    Optional<AccountVo> selectAccount(String gameName, String tagLine) throws DataAccessException;
+    Set<String> existAccount(List<String> puuidList) throws DataAccessException;
+    void insertAccount(AccountVo accountVo) throws DataAccessException;
 }

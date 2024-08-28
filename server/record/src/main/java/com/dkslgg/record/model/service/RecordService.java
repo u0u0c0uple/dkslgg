@@ -1,11 +1,12 @@
 package com.dkslgg.record.model.service;
 
-import com.dkslgg.record.model.dto.response.MatchReadResponseDto;
+import com.dkslgg.record.model.dto.command.ReadAccountCommandDto;
+import com.dkslgg.record.model.dto.response.AccountResponseDto;
+import com.dkslgg.record.model.dto.response.MatchResponseDto;
 
 import java.util.List;
 
 public interface RecordService {
-    String readPuuidByRiotId(String riotId);
-    List<String> readMatchListByPuuid(String puuid, String startTime);
-    MatchReadResponseDto readMatchByMatchId(String matchId);
+    AccountResponseDto readAccount(ReadAccountCommandDto readAccountCommandDto);
+    List<MatchResponseDto> readMatchList(String puuid, int index);
 }
