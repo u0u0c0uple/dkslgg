@@ -6,11 +6,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import lombok.Getter;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Entity
 @Getter
-public class LbtiQuestion extends Base {
+public class LbtiQuestion extends Base implements Serializable {
     @Id
     private int id;
     @Column(nullable = false, columnDefinition = "TEXT COLLATE 'utf8mb4_general_ci'")
